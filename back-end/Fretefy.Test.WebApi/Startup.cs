@@ -5,8 +5,6 @@ using Fretefy.Test.Infra.EntityFramework;
 using Fretefy.Test.Infra.EntityFramework.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,11 +31,14 @@ namespace Fretefy.Test.WebApi
         private void ConfigureDomainService(IServiceCollection services)
         {
             services.AddScoped<ICidadeService, CidadeService>();
+            services.AddScoped<IRegiaoService, RegiaoService>();
+
         }
 
         private void ConfigureInfraService(IServiceCollection services)
         {
             services.AddScoped<ICidadeRepository, CidadeRepository>();
+            services.AddScoped<IRegiaoRepository, RegiaoRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
