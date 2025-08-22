@@ -12,13 +12,6 @@ namespace Fretefy.Test.Infra.EntityFramework.Mappings
             builder.Property(p => p.Nome).HasMaxLength(1024).IsRequired();
             builder.Property(p => p.UF).HasMaxLength(2).IsRequired();
 
-            //define relacionamento
-            builder
-                .HasOne(c => c.Regiao)
-                .WithMany(r => r.Cidades)
-                .HasForeignKey(c => c.RegiaoId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasData(
                 new Cidade("Rio Branco", "AC"),
                 new Cidade("Maceió", "AL"),

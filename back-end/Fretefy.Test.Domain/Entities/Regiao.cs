@@ -9,10 +9,17 @@ namespace Fretefy.Test.Domain.Entities
         public Guid Id { get; set; }
 
         [Required]
+        [MaxLength(100)]
         public string Nome { get; set; }
 
-        public bool Active { get; set; }
+        public bool Ativo { get; set; }
 
-        public virtual List<Cidade> Cidades { get; set; } = new List<Cidade>();
+        public virtual ICollection<RegiaoCidade> RegiaoCidades { get; set; }
+
+        public Regiao()
+        {
+            Id = Guid.NewGuid();
+            RegiaoCidades = new HashSet<RegiaoCidade>();
+        }
     }
 }

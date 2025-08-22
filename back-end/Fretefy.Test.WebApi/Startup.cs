@@ -21,6 +21,17 @@ namespace Fretefy.Test.WebApi
                 options.UseSqlite("Data Source=Data\\Test.db");
             });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigins",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200") //url do front
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
+
             ConfigureInfraService(services);
             ConfigureDomainService(services);
 
@@ -54,6 +65,8 @@ namespace Fretefy.Test.WebApi
             {
                 endpoints.MapControllers();
             });
+
+            app.UseCors("AllowOrigins");
         }
     }
 }

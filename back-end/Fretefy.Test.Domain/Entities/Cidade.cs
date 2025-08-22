@@ -21,9 +21,5 @@ namespace Fretefy.Test.Domain.Entities
         public string Nome { get; set; }
 
         public string UF { get; set; }
-
-        public Guid RegiaoId { get; set; }
-
-        public virtual Regiao Regiao { get; set; }
     }
 }

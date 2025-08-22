@@ -39,12 +39,12 @@ namespace Fretefy.Test.Domain.Services
                 return; //ideal adicionar uma mensagem de retorno "Uma região com o mesmo nome já existe, utilize outro nome"
             }
 
-            if (!regiao.Cidades.Any())
+            if (!regiao.RegiaoCidades.Any())
             {
                 return; // "Uma região não pode ser adicionada sem conter ao menos uma cidade"
             }
 
-            if (regiao.Cidades.GroupBy(c => c.Id).Any(g => g.Count() > 1))
+            if (regiao.RegiaoCidades.GroupBy(c => c.CidadeId).Any(g => g.Count() > 1))
             {
                 return; //"Duas cidades iguais não podem ser adicionadas."
             }
@@ -58,19 +58,29 @@ namespace Fretefy.Test.Domain.Services
 
             if (nomeJaExiste)
             {
-                return; //ideal adicionar uma mensagem de retorno "Uma região com o mesmo nome já existe, utilize outro nome"
+                throw new Exception("Uma região com o mesmo nome já existe, utilize outro nome"); 
             }
 
-            if (!regiao.Cidades.Any())
+            if (!regiao.RegiaoCidades.Any())
             {
-                return; //ideal adicionar uma mensagem de retorno "Uma região precisa conter ao menos uma cidade"
+                throw new Exception("Uma região precisa conter ao menos uma cidade");
             }
 
-            if (regiao.Cidades.GroupBy(c => c.Id).Any(g => g.Count() > 1))
+            if (regiao.RegiaoCidades.GroupBy(c => c.CidadeId).Any(g => g.Count() > 1))
             {
-                return; //"Duas cidades iguais não podem ser adicionadas."
+                throw new Exception("Duas cidades iguais não podem ser adicionadas.");
             }
 
+            await _regiaoRepository.Update(regiao);
+        }
+
+        public async Task AlterarStatus(Guid id, bool ativo)
+        {
+            var regiao = await _regiaoRepository.GetById(id);
+            if (regiao == null)
+                throw new ArgumentException("Região não encontrada.");
+
+            regiao.Ativo = ativo;
             await _regiaoRepository.Update(regiao);
         }
 
@@ -99,13 +109,13 @@ namespace Fretefy.Test.Domain.Services
                 {
                     worksheet.Cell(currentRow, 1).Value = regiao.Id.ToString();
                     worksheet.Cell(currentRow, 2).Value = regiao.Nome;
-                    worksheet.Cell(currentRow, 3).Value = regiao.Active ? "Sim" : "Não";
+                    worksheet.Cell(currentRow, 3).Value = regiao.Ativo ? "Sim" : "Não";
 
-                    var qtdCidades = regiao.Cidades?.Count ?? 0;
+                    var qtdCidades = regiao.RegiaoCidades?.Count ?? 0;
                     worksheet.Cell(currentRow, 4).Value = qtdCidades;
 
                     var nomesCidades = qtdCidades > 0
-                        ? string.Join(", ", regiao.Cidades.Select(c => c.Nome))
+                        ? string.Join(", ", regiao.RegiaoCidades.Select(c => c.Cidade.Nome))
                         : "";
 
                     worksheet.Cell(currentRow, 5).Value = nomesCidades;

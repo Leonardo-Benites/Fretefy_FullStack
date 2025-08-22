@@ -13,5 +13,6 @@ namespace Fretefy.Test.Domain.Interfaces
         Task Update(Regiao regiao);
         Task Delete(Guid id);
         Task<byte[]> GenerateExcelReport();
+        Task AlterarStatus(Guid id, bool ativo);
     }
 }

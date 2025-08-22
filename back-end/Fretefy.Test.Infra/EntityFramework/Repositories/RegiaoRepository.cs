@@ -21,28 +21,28 @@ namespace Fretefy.Test.Infra.EntityFramework.Repositories
 
         public async Task<IEnumerable<Regiao>> List()
         {
-            return await _dbSet.Include(c => c.Cidades).OrderBy(r => r.Nome).ToListAsync();
+            return await _dbSet.AsNoTracking()
+                .Include(r => r.RegiaoCidades)
+                    .ThenInclude(rc => rc.Cidade)
+                .OrderBy(r => r.Nome)
+                .ToListAsync();
         }
 
         public async Task<Regiao> GetById(Guid id)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dbSet
+               .Include(r => r.RegiaoCidades)
+                   .ThenInclude(rc => rc.Cidade)
+               .FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public Task<bool> IsSameName(string nome, Guid? id = null)
         {
-            return _dbSet.AnyAsync(r => r.Nome == nome && (r.Id != id || id == null));
+            return _dbSet.AsNoTracking().AnyAsync(r => r.Nome.ToUpper() == nome.ToUpper() && (r.Id != id || id == null));
         }
-
-        //da pra usar isso também pra não retornar null
-        //public Regiao GetById(Guid id)
-        //{
-        //    return _dbSet.FirstOrDefault(r => r.Id == id);
-        //}
 
         public async Task Add(Regiao regiao)
         {
-            regiao.Active = true;
             _dbSet.Add(regiao);
             await _dbContext.SaveChangesAsync();
         }
@@ -56,7 +56,11 @@ namespace Fretefy.Test.Infra.EntityFramework.Repositories
 
         public async Task Delete(Guid id)
         {
-            var regiao = await _dbSet.FindAsync(id);
+            var regiao = await _dbSet
+               .Include(r => r.RegiaoCidades)
+                   .ThenInclude(rc => rc.Cidade)
+               .FirstOrDefaultAsync(r => r.Id == id);
+
             if (regiao != null)
             {
                 _dbSet.Remove(regiao);
