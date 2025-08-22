@@ -1,0 +1,47 @@
+<div class="regiao-form-container">
+  <h1 class="regiao-form-title">Cadastro de Regiões</h1>
+
+  <form [formGroup]="regiaoForm" (ngSubmit)="onSubmit()" class="regiao-form">
+    <div class="form-group">
+      <label for="nome" class="form-label">Nome da Região</label>
+      <input type="text" id="nome" formControlName="nome" class="form-control" placeholder="Digite o nome da região" />
+      <div class="form-error" *ngIf="regiaoForm.get('nome')?.touched && regiaoForm.get('nome')?.hasError('required')">
+        O nome é obrigatório.
+      </div>
+    </div>
+
+    <div class="cidades-container">
+      <label class="cidades-title">Locais da região</label>
+      <div class="cidades-list" formArrayName="cidades">
+        <div *ngFor="let cidade of getCidades().controls; let i = index" [formGroupName]="i" class="cidade-item">
+          <div class="cidade-form-group">
+            <div class="form-group">
+              <label for="cidade" class="form-label">Cidade</label>
+              <select formControlName="id" class="form-control" required>
+                <option *ngFor="let cidade of cidadesDisponiveis" [value]="cidade.id">{{ cidade.nome }} - {{ cidade.uf }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cidade-actions">
+            <button type="button" class="btn btn-remove" (click)="removerCidade(i)">
+              Remover Cidade
+            </button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-add" (click)="adicionarCidade()">
+        Adicionar Cidade
+      </button>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-cancel" routerLink="/regiao">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-save" [disabled]="regiaoForm.invalid">
+        Salvar
+      </button>
+    </div>
+  </form>
+</div>

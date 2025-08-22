@@ -1,3 +1,81 @@
-<p>
-  regiao works!
-</p>
+<div class="regiao-list-container">
+  <div class="header">
+    <h1>Gerenciamento de Regiões</h1>
+    <div class="header-actions">
+      <button 
+        class="btn btn-success" 
+        (click)="novaRegiao()">
+        <i class="icon">+</i>
+        Cadastrar Nova Região
+      </button>
+      <button 
+        class="btn btn-secondary" 
+        (click)="exportarExcel()"
+        [disabled]="exportando">
+        {{ exportando ? 'Exportando...' : 'Exportar Excel' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div *ngIf="loading" class="loading">
+      Carregando regiões...
+    </div>
+
+    <div *ngIf="!loading" class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Cidades</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let regiao of regioes | async">
+            <td>{{ regiao.nome }}</td>
+            <td>
+              <span class="cidade-tag" *ngFor="let cidade of regiao.cidades">
+                {{ cidade.nome }} - {{ cidade.uf }}
+              </span>
+            </td>
+            <td>
+              <span 
+                class="status-badge"
+                [class.status-ativo]="regiao.ativo"
+                [class.status-inativo]="!regiao.ativo">
+                {{ regiao.ativo ? 'Ativo' : 'Inativo' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-primary" 
+                  (click)="editarRegiao(regiao.id!)"
+                  title="Editar">
+                  Editar
+                </button>
+                <button 
+                  class="btn"
+                  [class.btn-warning]="regiao.ativo"
+                  [class.btn-success]="!regiao.ativo"
+                  (click)="alternarStatus(regiao)"
+                  [title]="regiao.ativo ? 'Desativar' : 'Ativar'">
+                  {{ regiao.ativo ? 'Desativar' : 'Ativar' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="(regioes | async)?.length === 0" class="empty-state">
+        <p>Nenhuma região cadastrada.</p>
+        <button class="btn btn-primary" (click)="novaRegiao()">
+          Cadastrar Primeira Região
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
